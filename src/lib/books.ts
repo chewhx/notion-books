@@ -1,5 +1,6 @@
 import { id, search } from '@chewhx/google-books';
 import { inquirer } from './prompt';
+import * as ora from 'ora';
 
 export async function promptSearchBooks(): Promise<any> {
 	const { searchTerm } = await inquirer({
@@ -12,7 +13,13 @@ export async function promptSearchBooks(): Promise<any> {
 		throw Error('No search term provided');
 	}
 
-	const { items } = await search(searchTerm);
+	const searchBooksPromise = search(searchTerm, {}, { maxResults: 20 });
+
+	ora.promise(searchBooksPromise, {
+		text: `Search books on ${searchTerm}...`,
+	});
+
+	const { items } = await searchBooksPromise;
 
 	const { book } = await inquirer({
 		type: 'list',
@@ -26,7 +33,14 @@ export async function promptSearchBooks(): Promise<any> {
 		})),
 	});
 
-	const res = await id(book.id);
+	const promise = id(book.id);
+
+	ora.promise(promise, {
+		text: 'Get book details',
+	});
+
+	const res = await promise;
+
 	return res;
 }
 

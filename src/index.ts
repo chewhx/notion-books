@@ -1,4 +1,7 @@
+import { loglert } from 'loglert';
+import ora from 'ora';
 import {
+	DELETE_NOTION_KEYS,
 	NOTION_DB_ID,
 	RESET_NOTION_API_KEY,
 	RESET_NOTION_DB_ID,
@@ -9,6 +12,7 @@ import { promptFirstAction } from './lib/init';
 import {
 	initKeystore,
 	keystore,
+	promptDeleteAllSecrets,
 	promptNotionApiKey,
 	promptNotionDatabaseId,
 } from './lib/keystore';
@@ -17,12 +21,12 @@ import {
 	getDatabaseTags,
 	notion,
 } from './lib/notion';
-import { log } from './utils/log';
 import { resolveCategoriesToTags } from './utils/utils';
 
 (async () => {
 	console.time('📖 Done');
 	try {
+		console.clear();
 		await initKeystore();
 
 		const firstAction = await promptFirstAction();
@@ -54,9 +58,15 @@ import { resolveCategoriesToTags } from './utils/utils';
 				keystore.get(NOTION_DB_ID)
 			);
 
-			await notion.pages.create(bookPage);
+			const notionPromise = notion.pages.create(bookPage);
 
-			log.success('Book added to notion database');
+			ora.promise(notionPromise, {
+				text: 'Add to Notion Database',
+			});
+
+			await notionPromise;
+
+			loglert.success('Book added to notion database');
 		}
 
 		if (firstAction === RESET_NOTION_API_KEY) {
@@ -66,10 +76,13 @@ import { resolveCategoriesToTags } from './utils/utils';
 		if (firstAction === RESET_NOTION_DB_ID) {
 			await promptNotionDatabaseId();
 		}
+
+		if (firstAction === DELETE_NOTION_KEYS) {
+			await promptDeleteAllSecrets();
+		}
 	} catch (error) {
 		if (error instanceof Error) {
-			log.error(error.message);
-			console.log(error);
+			loglert.error(error.message);
 		} else {
 			console.error(error);
 		}

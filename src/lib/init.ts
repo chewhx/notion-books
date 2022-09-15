@@ -1,4 +1,5 @@
 import {
+	DELETE_NOTION_KEYS,
 	RESET_NOTION_API_KEY,
 	RESET_NOTION_DB_ID,
 	SEARCH_BOOKS,
@@ -23,6 +24,7 @@ export async function promptFirstAction() {
 				name: RESET_NOTION_DB_ID,
 				value: RESET_NOTION_DB_ID,
 			},
+			{ name: DELETE_NOTION_KEYS, value: DELETE_NOTION_KEYS },
 		],
 	});
 

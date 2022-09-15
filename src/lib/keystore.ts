@@ -1,6 +1,6 @@
 import Configstore from 'configstore';
+import { loglert } from 'loglert';
 import { KEYSTORE_NAME, NOTION_API_KEY, NOTION_DB_ID } from '../constants';
-import { log } from '../utils/log';
 import { inquirer } from './prompt';
 
 export const keystore = new Configstore(KEYSTORE_NAME);
@@ -30,7 +30,7 @@ export async function promptNotionApiKey(): Promise<string> {
 
 	keystore.set(NOTION_API_KEY, notion_api_key);
 
-	log.success(`Notion API Key set to ${notion_api_key}`);
+	loglert.success(`Notion API Key set to ${notion_api_key}`, { name: 'DONE' });
 
 	return notion_api_key;
 }
@@ -49,9 +49,17 @@ export async function promptNotionDatabaseId(): Promise<string> {
 
 	keystore.set(NOTION_DB_ID, notion_db_id);
 
-	log.success(`Notion Database ID set to ${notion_db_id}`);
+	loglert.success(`Notion Database ID set to ${notion_db_id}`, {
+		name: 'DONE',
+	});
 
 	return notion_db_id;
+}
+
+export async function promptDeleteAllSecrets() {
+	keystore.clear();
+
+	loglert.success('Cleared api key and database id.', { name: 'DONE' });
 }
 
 export async function initKeystore(): Promise<void> {

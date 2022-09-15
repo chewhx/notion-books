@@ -1,7 +1,7 @@
 import { Client } from '@notionhq/client';
 import { CreatePageParameters } from '@notionhq/client/build/src/api-endpoints';
+import { loglert } from 'loglert';
 import { NOTION_API_KEY } from '../constants';
-import { log } from '../utils/log';
 import { keystore } from './keystore';
 
 export const notion = new Client({
@@ -16,7 +16,7 @@ export async function getDatabaseTags(
 		database_id: databaseId,
 	});
 	const property = response.properties[propertyName];
-	log.info('Retrieved current tags.');
+	loglert.info('Retrieved current tags.', { showName: false });
 	if (property.type === 'multi_select') {
 		return property.multi_select.options;
 	} else {

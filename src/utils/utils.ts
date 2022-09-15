@@ -1,4 +1,4 @@
-import { log } from './log';
+import { loglert } from 'loglert';
 
 export type NotionTag = {
 	id?: string;
@@ -43,7 +43,7 @@ export function resolveCategoriesToTags(
 			: (pushNewTag = true);
 	}
 
-	log.info('Resolved existing and new tags.');
+	loglert.info('Resolved existing and new tags.', { showName: false });
 	return combinedTags;
 }
 
